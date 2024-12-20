@@ -6,8 +6,8 @@ import random
 import nltk
 from nltk.chat.util import Chat, reflections
 # from predict_model import predict_sentiment
-from music_bot import get_music_recommendation,get_sentiment_recommendation  # Module gợi ý bài hát
-
+from music_bot import get_music_recommendation,get_sentiment_recommendation,get_similarity_song  # Module gợi ý bài hát
+from recommend_similarity_song import is_related_query
 app = Flask(__name__)
 CORS(app)
 
@@ -24,7 +24,7 @@ pairs = [
       "Mình vẫn khỏe, cảm ơn bạn! Bạn cần hỗ trợ gì không?", 
       "Mình ổn, cảm ơn bạn! Bạn thì sao?"]],
       
-    [r"(.*) tên gì|tên bạn là gì|(.*) gọi là gì|name|(.*) giới thiệu",
+    [r"(.*) tên gì|là gì|(.*) gọi là gì|name|(.*) giới thiệu",
      ["Mình là MusicBot, trợ lý chatbot của bạn! Rất vui được gặp bạn."]],
       
     [r"(.*) thời tiết|thời tiết hôm nay|(.*) thời tiết như thế nào|weather",
@@ -42,11 +42,12 @@ pairs = [
       "Rất vui được giúp đỡ bạn. Nếu cần gì thêm, đừng ngại nhé!",
       "Cảm ơn bạn đã tin tưởng mình!"]],
       
-    [r"(.*) làm gì|làm gì bây giờ|có thể làm gì|làm được gì",
+    [r"(.*) làm gì|làm gì bây giờ|(.*) làm được gì|có thể làm gì",
      ["Mình có thể giúp bạn tìm nhạc theo tâm trạng hiện tại. Bạn muốn nghe nhạc vui hay buồn?",
       "Hãy cho mình biết tâm trạng của bạn, mình sẽ tìm bài hát phù hợp cho bạn!",
       "Mình ở đây để giúp bạn tìm nhạc! Bạn muốn nghe gì hôm nay?"]]
 ]
+
 
 # Tạo chatbot với các mẫu câu
 chatbot = Chat(pairs, reflections)
@@ -92,6 +93,8 @@ def get_response():
             response = chatbot.respond(user_message.lower())
             if response:
                 return jsonify({"response": response})
+            if is_related_query(user_message):
+                return jsonify({"response": get_similarity_song(user_message)})
             # Kiểm tra xem user_message có chứa các từ liên quan đến việc gợi ý bài hát hay không
             music_keywords = ["nhạc", "bài hát", "nghe", "bài"]
             if any(keyword in user_message.lower() for keyword in music_keywords):

@@ -56,8 +56,8 @@ def make_bert_features(v_text, tokenizer, phobert, sw):
 def predict_sentiment(text):
     """Predicts the sentiment of a given text."""
     # Load the saved model and label mapping
-    model = load('C:/Users/Truc/Desktop/HK1 2024-2025/Truy vấn thông tin đa phương tiện CS336/Đồ án chatbot/official_code/chatbot/model/save_model.pkl')
-    label_mapping = load('C:/Users/Truc/Desktop/HK1 2024-2025/Truy vấn thông tin đa phương tiện CS336/Đồ án chatbot/official_code/chatbot/model/label_mapping.pkl')
+    model = load('./chatbot/model/save_model.pkl')
+    label_mapping = load('./chatbot/model/label_mapping.pkl')
 
     # Inverted label mapping for getting string labels from predictions
     inverted_label_mapping = {v: k for k, v in label_mapping.items()}
